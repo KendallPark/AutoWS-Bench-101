@@ -5,14 +5,14 @@ import pytorch_lightning as pl
 import numpy as np
 import pickle
 import os
-from pytorch_lightning.utilities.cli import DATAMODULE_REGISTRY
+# from pytorch_lightning.cli import LightningCLI
 from torchvision import transforms
 from torch.utils.data import Dataset, DataLoader
 from collections import Counter
 from sklearn.model_selection import train_test_split
 
 
-@DATAMODULE_REGISTRY
+# @DATAMODULE_REGISTRY
 class ECGDataModule(pl.LightningDataModule):
     def __init__(
         self,
