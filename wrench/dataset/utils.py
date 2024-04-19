@@ -214,6 +214,7 @@ def nmf_text_extractor(data: List[Dict], device: torch.device = None, model_name
     def extractor(data: List[Dict]):
         corpus = list(map(lambda x: x['text'], data))
         llm = ecco.from_pretrained(model_name, activations=True, verbose=False)
+        print("DEVICE: ", llm.device)
         text_features = []
         for sentence in tqdm(corpus):
             inputs = llm.tokenizer(sentence, return_tensors="pt", truncation=True, return_attention_mask=False, return_token_type_ids=False)
