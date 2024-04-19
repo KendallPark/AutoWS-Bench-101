@@ -30,6 +30,7 @@ lie-learn = {git = "https://github.com/AMLab-Amsterdam/lie_learn"}
 googledrivedownloader = "^0.4"
 lightgbm = "^4.2.0"
 lief = "^0.13.2"
+ecco = {git = "https://github.com/KendallPark/ecco.git"}
 
 
 [tool.poetry.group.torch.dependencies]
