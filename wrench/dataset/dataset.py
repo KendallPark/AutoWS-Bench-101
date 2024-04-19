@@ -9,7 +9,7 @@ from torchvision.datasets.folder import pil_loader
 
 from .basedataset import BaseDataset
 from .utils import bag_of_words_extractor, tf_idf_extractor, sentence_transformer_extractor, \
-    bert_text_extractor, bert_relation_extractor, image_feature_extractor
+    bert_text_extractor, bert_relation_extractor, image_feature_extractor, nmf_text_extractor
 
 
 class NumericDataset(BaseDataset):
@@ -61,11 +61,19 @@ class TextDataset(BaseDataset):
                                                              model_name=model_name,
                                                              **kwargs)
         elif extract_fn == 'bert':
+            print("BERT EXTRACTION USED")
             data, extractor = bert_text_extractor(self.examples,
                                                   device=device,
                                                   model_name=model_name,
                                                   feature=feature,
                                                   **kwargs)
+        elif extract_fn == 'nmf':
+            print("NMF EXTRACTION USED")
+            data, extractor = nmf_text_extractor(self.examples,
+                                                 device=device,
+                                                 model_name=model_name,
+                                                 **kwargs)
+
         else:
             raise NotImplementedError(f'feature extraction method {extract_fn} is not supported!')
 

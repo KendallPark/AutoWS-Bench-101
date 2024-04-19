@@ -13,6 +13,7 @@ from torchvision import transforms
 from torchvision.datasets.folder import pil_loader
 from PIL import Image
 from .basedataset import BaseDataset
+import ecco
 
 
 def check_weak_labels(dataset: Union[BaseDataset, np.ndarray]) -> np.ndarray:
@@ -197,6 +198,32 @@ def sentence_transformer_extractor(data: List[Dict], model_name: Optional[str] =
     model = SentenceTransformer(model_name, **kwargs)
     embeddings = model.encode(corpus)
     return embeddings, model.encode
+
+
+def nmf_text_extractor(data: List[Dict], device: torch.device = None, model_name: Optional[str] = 'distilgpt2', **kwargs: Any):
+    """
+    Extract text features using NMF (Non-negative Matrix Factorization) for text data.
+    :param data: Data in json format.
+    :param device: Torch device to be used.
+    :param model_name: transformer (Huggingface) model name to be used.
+    :param kwargs: misc arguments for the pretrained model.
+    :return: text feature as np array of size (corpus_size, output_dim)
+    """
+    
+    @torch.no_grad()
+    def extractor(data: List[Dict]):
+        corpus = list(map(lambda x: x['text'], data))
+        llm = ecco.from_pretrained(model_name, activations=True, verbose=False)
+        text_features = []
+        for sentence in tqdm(corpus):
+            inputs = llm.tokenizer(sentence, return_tensors="pt", truncation=True, return_attention_mask=False, return_token_type_ids=False)
+            output = llm(inputs)
+            nmf = output.run_nmf(n_components=12)
+            text_features.append(nmf.components.T)
+        return np.array(text_features)
+
+    embeddings = extractor(data)
+    return embeddings, extractor
 
 
 def bert_text_extractor(data: List[Dict], device: torch.device = None, model_name: Optional[str] = 'bert-base-cased',
