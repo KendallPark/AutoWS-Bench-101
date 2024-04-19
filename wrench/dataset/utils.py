@@ -210,7 +210,6 @@ def nmf_text_extractor(data: List[Dict], device: torch.device = None, model_name
     :return: text feature as np array of size (corpus_size, output_dim)
     """
     
-    @torch.no_grad()
     def extractor(data: List[Dict]):
         corpus = list(map(lambda x: x['text'], data))
         llm = ecco.from_pretrained(model_name, activations=True, verbose=False)
