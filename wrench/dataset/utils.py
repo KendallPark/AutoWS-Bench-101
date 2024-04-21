@@ -219,7 +219,7 @@ def nmf_text_extractor(data: List[Dict], device: torch.device = None, model_name
             inputs = llm.tokenizer(sentence, return_tensors="pt", truncation=True, return_attention_mask=False, return_token_type_ids=False)
             output = llm(inputs)
             nmf = output.run_nmf(n_components=12)
-            text_features.append(nmf.components.T)
+            text_features.append(nmf.features)
         return np.array(text_features)
 
     embeddings = extractor(data)
