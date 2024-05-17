@@ -9,6 +9,9 @@ import fwrench.utils.data_settings as settings
 import numpy as np
 import torch
 from sklearn.decomposition import PCA
+from sklearn.decomposition import NMF
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score
 from wrench.logging import LoggingHandler
 
@@ -132,6 +135,11 @@ def main(
         embedder = feats.FlattenEmbedding()
     elif embedding == "pca":
         emb = PCA(n_components=100)
+        embedder = feats.SklearnEmbedding(emb)
+    elif embedding == "nmf":
+        scaler = MinMaxScaler()
+        pipeline = Pipeline([("Normalize", scaler), ("NMF", NMF(n_components=100, max_iter=1000))])
+        emb = pipeline
         embedder = feats.SklearnEmbedding(emb)
     elif embedding == "resnet18":
         embedder = feats.ResNet18Embedding(dataset)
